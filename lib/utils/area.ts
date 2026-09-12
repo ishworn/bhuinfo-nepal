@@ -18,7 +18,6 @@ export interface AreaResult {
 export function sqftToAll(sqft: number): AreaResult {
   const sqm = sqft / 10.7639;
   const ropani = sqft / AREA_CONVERSIONS.ropaniToSqft;
-  const totalAana = sqft / AREA_CONVERSIONS.aanaToSqft;
   const ropaniInt = Math.floor(ropani);
   const aanaRemainder = (ropani - ropaniInt) * AREA_CONVERSIONS.ropaniToAana;
   const aanaInt = Math.floor(aanaRemainder);

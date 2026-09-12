@@ -11,20 +11,27 @@ import { Suspense } from 'react';
 
 function CompareContent() {
   const searchParams = useSearchParams();
-  const ids = (searchParams.get('ids') ?? '').split(',').filter(Boolean).slice(0, 3);
+  const idsParam = searchParams.get('ids') ?? '';
+  const ids = idsParam.split(',').filter(Boolean).slice(0, 3);
   const [parcels, setParcels] = useState<LandParcel[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchAll() {
       setLoading(true);
-      const results = await Promise.all(ids.map(id => fetch(`/api/land/${id}`).then(r => r.json())));
-      setParcels(results.filter(r => r.success).map((r: any) => r.data));
+      const results: Array<{ success: boolean; data: LandParcel }> = await Promise.all(
+        ids.map((id) => fetch(`/api/land/${id}`).then((r) => r.json()))
+      );
+      setParcels(results.filter((r) => r.success).map((r) => r.data));
       setLoading(false);
     }
-    if (ids.length > 0) fetchAll();
-    else setLoading(false);
-  }, [ids.join(',')]);
+    if (ids.length > 0) {
+      fetchAll();
+    } else {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idsParam]);
 
   const rows: Array<{ label: string; getValue: (p: LandParcel) => React.ReactNode }> = [
     { label: 'Kitta Number', getValue: p => <span className="font-mono text-xs">{p.kittaNumber}</span> },

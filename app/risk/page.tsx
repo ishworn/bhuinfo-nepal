@@ -25,7 +25,6 @@ export default function RiskPage() {
     if (['High', 'Very High'].includes(p.floodRisk)) provinceCounts[p.province].high++;
   }
 
-  const highRisk = parcels.filter(p => (p.riskScore?.overall ?? 100) < 45);
   const sorted = [...parcels].sort((a, b) => (a.riskScore?.overall ?? 100) - (b.riskScore?.overall ?? 100));
 
   return (

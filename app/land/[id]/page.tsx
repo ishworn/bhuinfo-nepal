@@ -7,11 +7,12 @@ import { PriceCard } from '@/components/shared/PriceCard';
 import { formatNPR } from '@/lib/utils/area';
 import { getFloodRiskColor } from '@/lib/services/risk.service';
 import {
-  MapPin, Ruler, Home, Shield, Zap, Droplets, Wifi, Navigation,
+  MapPin, Ruler, Home, Shield, Zap, Droplets, Wifi,
   GraduationCap, Heart, ShoppingBag, Banknote, Bus, AlertTriangle,
-  CheckCircle, XCircle, Building, Mountain, Waves, ArrowLeft
+  Building, Mountain, Waves, ArrowLeft
 } from 'lucide-react';
 import Link from 'next/link';
+import MapWrapper from '@/components/map/MapWrapper';
 
 interface Props {
   params: { id: string };
@@ -21,7 +22,7 @@ export default async function LandDetailPage({ params }: Props) {
   const parcel = await dataProvider.getLandById(params.id);
   if (!parcel) notFound();
 
-  const facilityIcons: Record<string, any> = {
+  const facilityIcons: Record<string, React.ComponentType<{ className?: string }>> = {
     School: GraduationCap, Hospital: Heart, Market: ShoppingBag,
     Bank: Banknote, 'Bus Stop': Bus, Police: Shield,
     Temple: Building, Restaurant: ShoppingBag, Pharmacy: Heart, Other: MapPin,
@@ -106,12 +107,14 @@ export default async function LandDetailPage({ params }: Props) {
               <h2 className="text-lg font-semibold text-slate-800">B. Location</h2>
               <DataBadge status="Sample" />
             </div>
-            <div className="bg-slate-100 rounded-xl h-48 flex items-center justify-center mb-4">
-              <div className="text-center text-slate-500">
-                <MapPin className="w-8 h-8 mx-auto mb-1 text-emerald-600" />
-                <p className="text-sm font-medium">Map: {parcel.latitude.toFixed(4)}°N, {parcel.longitude.toFixed(4)}°E</p>
-                <p className="text-xs text-slate-400">Interactive map available in Explore view</p>
-              </div>
+            <div className="mb-4 h-72">
+              <MapWrapper
+                parcels={[parcel]}
+                selectedParcelId={parcel.id}
+                center={[parcel.latitude, parcel.longitude]}
+                zoom={14}
+                height="100%"
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

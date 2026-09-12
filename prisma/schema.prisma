@@ -1,0 +1,161 @@
+// BhuInfo Nepal - PostgreSQL-ready Data Architecture
+// Configured with SQLite/PostgreSQL compatibility for production GIS readiness
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Change to "postgresql" for production PostGIS deployment
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  name         String?
+  role         String      @default("USER") // USER, ASSESSOR, ADMIN
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  savedLands   SavedLand[]
+}
+
+model SavedLand {
+  id        String     @id @default(cuid())
+  userId    String
+  parcelId  String
+  notes     String?
+  createdAt DateTime   @default(now())
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parcel    LandParcel @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, parcelId])
+}
+
+model DataSource {
+  id          String       @id @default(cuid())
+  name        String
+  type        String       // "SAMPLE_MOCK", "OFFICIAL_GOV", "COMMERCIAL_GIS", "COMMUNITY"
+  provider    String
+  isActive    Boolean      @default(true)
+  license     String?
+  lastSyncAt  DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  parcels     LandParcel[]
+}
+
+model LandParcel {
+  id                 String             @id @default(cuid())
+  kittaNumber        String             @unique
+  province           String
+  district           String
+  municipality       String
+  ward               Int
+  area               Float
+  areaUnit           String             // "Ropani", "Aana", "Bigha", "Kattha"
+  areaInAana         Float
+  areaInSqft         Float
+  areaInSqm          Float
+  landUse            String             // "Residential", "Agricultural", "Commercial", "Industrial", "Mixed", "Forest", "Riverbed", "Public", "Unknown"
+  ownershipType      String             // "Private", "Guthi", "Government", "Institutional", "Organization", "Unknown"
+  
+  // GIS Coordinates & Geometry
+  latitude           Float
+  longitude          Float
+  geometryGeoJson    String?            // GeoJSON Polygon / MultiPolygon string for PostGIS
+  elevationMeters    Float?
+
+  // Access & Roads
+  roadDistance       Float              // meters
+  roadWidth          Float              // feet
+  roadType           String             // "Highway", "Blacktopped", "Gravel", "Trail", "None"
+  
+  // Environment & Hazards
+  riverDistance      Float              // meters
+  floodRisk          String             // "None", "Low", "Moderate", "High", "Very High"
+  slope              String             // "Flat", "Gentle", "Moderate", "Steep", "Very Steep"
+  terrain            String             // "Plain", "Hill", "Mountain", "Valley", "Terai"
+  landslideRisk      String?            // "Low", "Moderate", "High"
+
+  // Infrastructure Utilities
+  electricity        Boolean            @default(false)
+  water              Boolean            @default(false)
+  drainage           Boolean            @default(false)
+  internet           Boolean            @default(false)
+  sewageAvailable    Boolean            @default(false)
+
+  // Status & Provenance
+  availabilityStatus String             @default("Not Listed") // "For Sale", "For Lease", "Not Listed", "Under Negotiation"
+  dataStatus         String             @default("Sample")     // "Sample", "Estimated", "Needs Verification", "Verified"
+  confidenceScore    Float              @default(0.8)
+  description        String?
+  tags               String?            // JSON or comma separated strings
+
+  dataSourceId       String?
+  dataSource         DataSource?        @relation(fields: [dataSourceId], references: [id])
+  
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  facilities         NearbyFacility[]
+  priceEstimates     PriceEstimate[]
+  listings           LandListing[]
+  savedBy            SavedLand[]
+
+  @@index([province, district, municipality])
+  @@index([ownershipType])
+  @@index([landUse])
+}
+
+model NearbyFacility {
+  id            String     @id @default(cuid())
+  parcelId      String
+  type          String     // "School", "Hospital", "Market", "Bank", "Bus Stop", "Police", "Temple", "Other"
+  name          String
+  distanceKm    Float
+  distanceLabel String
+  latitude      Float?
+  longitude     Float?
+  parcel        LandParcel @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+
+  @@index([parcelId])
+}
+
+model PriceEstimate {
+  id                    String     @id @default(cuid())
+  parcelId              String
+  isAvailable           Boolean    @default(true)
+  unavailableReason     String?
+  basePricePerAana      Float
+  locationFactor        Float
+  roadFactor            Float
+  infrastructureFactor  Float
+  landUseFactor         Float
+  accessibilityFactor   Float
+  riskFactor            Float
+  estimatedPricePerAana Float
+  estimatedTotal        Float
+  estimatedRangeLow     Float
+  estimatedRangeHigh    Float
+  confidence            String     // "Low", "Medium", "High"
+  calculatedAt          DateTime   @default(now())
+  parcel                LandParcel @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+
+  @@index([parcelId])
+}
+
+model LandListing {
+  id           String     @id @default(cuid())
+  parcelId     String
+  askingPrice  Float
+  listingType  String     // "Sale", "Lease"
+  contactPhone String?
+  contactNote  String?
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  parcel       LandParcel @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+
+  @@index([parcelId])
+}

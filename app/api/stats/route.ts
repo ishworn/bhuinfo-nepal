@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const stats = await dataProvider.getAdminStats();
     return NextResponse.json({ success: true, data: stats });
-  } catch (error) {
+  } catch  {
     return NextResponse.json({ success: false, error: 'Failed to fetch stats' }, { status: 500 });
   }
 }

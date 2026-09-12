@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { dataProvider } from '@/lib/data';
 import { LandFilter } from '@/lib/types';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);

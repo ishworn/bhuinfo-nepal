@@ -60,12 +60,7 @@ export function calculateRiskScore(parcel: LandParcel): RiskScore {
   const infra = Math.round(infrastructureBonus(parcel.electricity, parcel.water, parcel.drainage, parcel.internet));
   const loc = Math.round(locationBonus(parcel.municipality));
 
-  const overall = Math.max(0, Math.min(100,
-    100 - flood - river - slope + road + infra + loc - 100 + 65
-    // base of 65, then adjustments cap at 100
-  ));
-
-  // Re-calc with cleaner formula:
+  // Transparent rule-based formula:
   // Start with 50 base, add bonuses, subtract penalties, clamp 0-100
   const raw = 50 + road + infra + loc - flood - river - slope;
   const finalScore = Math.max(0, Math.min(100, Math.round(raw)));

@@ -1,6 +1,5 @@
 import { RiskScore } from '@/lib/types';
 import { DataBadge } from './DataBadge';
-import { Shield, ShieldAlert, ShieldCheck } from 'lucide-react';
 
 interface RiskScoreCardProps {
   riskScore: RiskScore;

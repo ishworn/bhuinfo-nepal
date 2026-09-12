@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import { LandParcel, LandFilter, SortOption } from '@/lib/types';
+import { LandParcel, LandFilter, SortOption, Province, LandUse, OwnershipType, AvailabilityStatus, FloodRisk } from '@/lib/types';
 import { LandCard } from '@/components/land/LandCard';
 import { Search, SlidersHorizontal, X, Loader2 } from 'lucide-react';
 import { PROVINCES } from '@/lib/constants';
@@ -28,7 +28,7 @@ export default function ListingsPage() {
       const res = await fetch(`/api/land?${params.toString()}`);
       const data = await res.json();
       if (data.success) {
-        let sorted = [...data.data] as LandParcel[];
+        const sorted = [...data.data] as LandParcel[];
         if (sort === 'price-asc') sorted.sort((a, b) => (a.listingPrice ?? a.priceEstimate?.estimatedTotal ?? 0) - (b.listingPrice ?? b.priceEstimate?.estimatedTotal ?? 0));
         if (sort === 'price-desc') sorted.sort((a, b) => (b.listingPrice ?? b.priceEstimate?.estimatedTotal ?? 0) - (a.listingPrice ?? a.priceEstimate?.estimatedTotal ?? 0));
         if (sort === 'area-asc') sorted.sort((a, b) => a.areaInSqft - b.areaInSqft);
@@ -117,7 +117,7 @@ export default function ListingsPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <select
               value={filters.province ?? ''}
-              onChange={e => setFilters(p => ({ ...p, province: e.target.value as any || undefined }))}
+              onChange={e => setFilters(p => ({ ...p, province: (e.target.value as Province) || undefined }))}
               className="border border-slate-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="">All Provinces</option>
@@ -125,7 +125,7 @@ export default function ListingsPage() {
             </select>
             <select
               value={filters.landUse ?? ''}
-              onChange={e => setFilters(p => ({ ...p, landUse: e.target.value as any || undefined }))}
+              onChange={e => setFilters(p => ({ ...p, landUse: (e.target.value as LandUse) || undefined }))}
               className="border border-slate-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="">All Land Use</option>
@@ -133,7 +133,7 @@ export default function ListingsPage() {
             </select>
             <select
               value={filters.ownershipType ?? ''}
-              onChange={e => setFilters(p => ({ ...p, ownershipType: e.target.value as any || undefined }))}
+              onChange={e => setFilters(p => ({ ...p, ownershipType: (e.target.value as OwnershipType) || undefined }))}
               className="border border-slate-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="">All Ownership</option>
@@ -141,7 +141,7 @@ export default function ListingsPage() {
             </select>
             <select
               value={filters.availabilityStatus ?? ''}
-              onChange={e => setFilters(p => ({ ...p, availabilityStatus: e.target.value as any || undefined }))}
+              onChange={e => setFilters(p => ({ ...p, availabilityStatus: (e.target.value as AvailabilityStatus) || undefined }))}
               className="border border-slate-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="">All Status</option>
@@ -149,7 +149,7 @@ export default function ListingsPage() {
             </select>
             <select
               value={filters.floodRisk ?? ''}
-              onChange={e => setFilters(p => ({ ...p, floodRisk: e.target.value as any || undefined }))}
+              onChange={e => setFilters(p => ({ ...p, floodRisk: (e.target.value as FloodRisk) || undefined }))}
               className="border border-slate-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="">Any Flood Risk</option>

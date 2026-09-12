@@ -14,7 +14,7 @@ export function Footer() {
               <span className="text-white font-bold text-lg">BhuInfo Nepal</span>
             </div>
             <p className="text-sm text-slate-400 mb-4 max-w-md">
-              Nepal's Land Intelligence & Due-Diligence platform. Explore land information,
+              Nepal&apos;s Land Intelligence &amp; Due-Diligence platform. Explore land information,
               risk indicators, and estimated values in one place.
             </p>
             <div className="flex items-start gap-2 bg-amber-900/30 border border-amber-700/30 rounded-lg p-3">

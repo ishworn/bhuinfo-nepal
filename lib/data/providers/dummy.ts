@@ -97,14 +97,18 @@ class DummyDataProvider implements IDataProvider {
   }
 
   async createLandParcel(parcel: Omit<LandParcel, 'id' | 'createdAt'>): Promise<LandParcel> {
+    void parcel;
     throw new Error('Read-only in dummy mode');
   }
 
   async updateLandParcel(id: string, parcel: Partial<LandParcel>): Promise<LandParcel> {
+    void id;
+    void parcel;
     throw new Error('Read-only in dummy mode');
   }
 
   async deleteLandParcel(id: string): Promise<void> {
+    void id;
     throw new Error('Read-only in dummy mode');
   }
 }

@@ -1,21 +1,21 @@
 'use client';
 import { useState } from 'react';
-import { TrendingUp, Calculator, AlertCircle } from 'lucide-react';
+import { TrendingUp, AlertCircle } from 'lucide-react';
 import { DataBadge } from '@/components/shared/DataBadge';
 import { formatNPR } from '@/lib/utils/area';
 import { estimatePrice, formatFactorChange, getFactorLabel } from '@/lib/services/price.service';
-import { LandParcel } from '@/lib/types';
+import { LandParcel, Province, LandUse, RoadType, FloodRisk, Slope } from '@/lib/types';
 
 export default function EstimatorPage() {
   const [municipality, setMunicipality] = useState('Kathmandu Metropolitan');
-  const [province, setProvince] = useState('Bagmati');
-  const [district, setDistrict] = useState('Kathmandu');
-  const [landUse, setLandUse] = useState('Residential');
-  const [roadType, setRoadType] = useState('Blacktopped');
+  const [province, setProvince] = useState<Province>('Bagmati');
+  const [landUse, setLandUse] = useState<LandUse>('Residential');
+  const [roadType, setRoadType] = useState<RoadType>('Blacktopped');
   const [roadWidth, setRoadWidth] = useState(16);
   const [roadDistance, setRoadDistance] = useState(10);
-  const [floodRisk, setFloodRisk] = useState('Low');
-  const [slope, setSlope] = useState('Flat');
+  const [floodRisk, setFloodRisk] = useState<FloodRisk>('Low');
+  const slope: Slope = 'Flat';
+  const district = 'Kathmandu';
   const [electricity, setElectricity] = useState(true);
   const [water, setWater] = useState(true);
   const [drainage, setDrainage] = useState(true);
@@ -23,11 +23,11 @@ export default function EstimatorPage() {
   const [aana, setAana] = useState(4);
 
   const mockParcel: LandParcel = {
-    id: 'estimator-mock', kittaNumber: '', province: province as any, district, municipality,
+    id: 'estimator-mock', kittaNumber: '', province, district, municipality,
     ward: 1, area: aana, areaUnit: 'Aana', areaInAana: aana, areaInSqft: aana * 342.25, areaInSqm: aana * 31.8,
-    landUse: landUse as any, ownershipType: 'Private', latitude: 0, longitude: 0,
-    roadDistance, roadWidth, roadType: roadType as any, riverDistance: 1000, floodRisk: floodRisk as any,
-    slope: slope as any, terrain: 'Hill', electricity, water, drainage, internet,
+    landUse, ownershipType: 'Private', latitude: 0, longitude: 0,
+    roadDistance, roadWidth, roadType, riverDistance: 1000, floodRisk,
+    slope, terrain: 'Hill', electricity, water, drainage, internet,
     nearbyFacilities: [], availabilityStatus: 'For Sale', description: '',
     dataStatus: 'Sample', dataSource: '', lastUpdated: '', createdAt: '', tags: [],
   };
@@ -58,7 +58,7 @@ export default function EstimatorPage() {
           <h2 className="font-semibold text-slate-800 mb-2">Land Parameters</h2>
           <div>
             <label className="text-xs text-slate-500 block mb-1">Province</label>
-            <select value={province} onChange={e => setProvince(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+            <select value={province} onChange={e => setProvince(e.target.value as Province)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
               {['Bagmati', 'Koshi', 'Madhesh', 'Gandaki', 'Lumbini', 'Karnali', 'Sudurpashchim'].map(p => <option key={p}>{p}</option>)}
             </select>
           </div>
@@ -71,7 +71,7 @@ export default function EstimatorPage() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-slate-500 block mb-1">Land Use</label>
-              <select value={landUse} onChange={e => setLandUse(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+              <select value={landUse} onChange={e => setLandUse(e.target.value as LandUse)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
                 {['Residential', 'Commercial', 'Industrial', 'Mixed', 'Agricultural'].map(u => <option key={u}>{u}</option>)}
               </select>
             </div>
@@ -83,13 +83,13 @@ export default function EstimatorPage() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-slate-500 block mb-1">Road Type</label>
-              <select value={roadType} onChange={e => setRoadType(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+              <select value={roadType} onChange={e => setRoadType(e.target.value as RoadType)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
                 {['Highway', 'Blacktopped', 'Gravel', 'Trail', 'None'].map(r => <option key={r}>{r}</option>)}
               </select>
             </div>
             <div>
               <label className="text-xs text-slate-500 block mb-1">Flood Risk</label>
-              <select value={floodRisk} onChange={e => setFloodRisk(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+              <select value={floodRisk} onChange={e => setFloodRisk(e.target.value as FloodRisk)} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
                 {['None', 'Low', 'Moderate', 'High', 'Very High'].map(r => <option key={r}>{r}</option>)}
               </select>
             </div>
